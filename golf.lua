@@ -74,7 +74,7 @@ require "constants"
 local t = {...}
 local file = t[1]
 local arguments = {}
-local flags = {debug = true, debug_error = true}
+local flags = {debug = true, debug_error = true, e = true}
 for i=2, #t do
 	if t[i]:sub(1,1)=='+' then
 		flags[t[i]:sub(2):lower()]=(t[i]:sub(2)==t[i]:sub(2):lower())
