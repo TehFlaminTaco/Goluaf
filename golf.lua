@@ -1,3 +1,12 @@
+pth = arg[0]:match("(.*\\).*.lua")
+function require(tar)
+	local b,e = loadfile(pth..tar:gsub("%.","\\")..".lua")
+	if b then
+		b()
+	else
+		error(e)
+	end
+end
 -- ENUMS
 
 DEBUG_BASIC = 1
