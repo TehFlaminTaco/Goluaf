@@ -104,7 +104,7 @@ end
 
 local b,e
 if flags.e then
-	b,e = loadstring(file)
+	b,e = load(file)
 else
 	b,e = loadfile(file)
 end
