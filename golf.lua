@@ -25,6 +25,15 @@ function debug_message(str,debuglevel)
 	end
 end
 
+local err = error
+function error(str,...)
+	debug_message(str,DEBUG_ERROR)
+	debug_message(debug.traceback(),DEBUG_ERROR)
+	if(__DEBUG & DEBUG_ERROR)then
+		os.exit()
+	end
+end
+
 function import(table)
 	for k,v in pairs(table) do
 		if _G[k] then
@@ -88,7 +97,13 @@ if not file then
 	error("Cannot load empty file...")
 end
 
-local b,e = flags.e and loadstring(file) or loadfile(file)
+
+local b,e
+if flags.e then
+	b,e = loadstring(file)
+else
+	b,e = loadfile(file)
+end
 if b then
 	local B,E = pcall(b,table.unpack(arguments))
 	if not B then

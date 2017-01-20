@@ -59,6 +59,19 @@ function func.__mul(a,b)
 			return table.unpack(outs)
 		end
 	end
+	if(type(a)=='function'and type(b)=='table')then
+		return function(...)
+			local outs = {}
+			local i = 1
+			local t = {next(b)}
+			while #t>0 do
+				a(table.unpack(t))
+				i = t[1]
+				t = {next(b,i)}
+			end
+			return table.unpack(outs)
+		end
+	end
 	if(type(a)=='function'and type(b)=='number')then
 		return function(...)
 			for i=1, b do
@@ -84,6 +97,10 @@ function func.__pow(a,b)
 		return function(...)
 			return a(table.unpack(table.add({...},{b})))
 		end
+	else
+		return function(...)
+			return b(table.unpack(table.add({a},{...})))
+		end
 	end
 end
 
@@ -92,8 +109,20 @@ function func.__concat(a,b)
 end
 
 -- Strings
-function stri.__call(str,match)
-	return str:gmatch(match or ".")
+function stri.__index(str,key)
+	if type(key)=='number' then
+		return str:sub(key,key)
+	else
+		return string[key] or str:find(key)
+	end
+end
+
+function stri.__call(str,match,b)
+	if b then
+		return str:sub(match,b)
+	else
+		return str:gmatch(match or ".")
+	end
 end
 
 function stri.__add(a,b)
