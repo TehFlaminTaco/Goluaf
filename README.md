@@ -109,7 +109,7 @@ Some values have also be added to act as constants.
 * `H`: `"Hello, World!"`
 * `h`: `"hello world"`
 * `p`: `print`
-* 'w': `write`
+* `w`: `write`
 * `m`: `min`
 * `M`: `max`
 * `Q`: `"\""`
