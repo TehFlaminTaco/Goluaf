@@ -29,8 +29,8 @@ w((char*(90)(65))())	-- Write the alphabet
 
 You can run a script from the command line via one of the below methods:
 
-* `lua golf.lua target_file.lua "_arg1" "_arg2"`
-* `lua golf.lua "something_to_do" +e "_arg1" "_arg2"`
+* `lua golf.lua target_file.lua -e "_arg1" "_arg2"`
+* `lua golf.lua "something_to_do" "_arg1" "_arg2"`
 
 ## Features
 

@@ -1,8 +1,12 @@
 pth = arg[0]:match("(.*\\).*.lua")
+local rqr = require
 function require(tar)
+	if not pth then
+		return rqr(tar)
+	end
 	local b,e = loadfile(pth..tar:gsub("%.","\\")..".lua")
 	if b then
-		b()
+		return b()
 	else
 		error(e)
 	end
