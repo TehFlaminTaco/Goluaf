@@ -2,6 +2,9 @@ local glb = {}setmetatable(_G,glb)
 
 function glb.__index(t,key)
 	if key:sub(1,1)=="_" then
+		if key:sub(2):match("^%d+$") then
+			return _[tonumber(key:sub(2))]
+		end
 		local f = nil
 		local b = false
 		for k,v in pairs(t) do

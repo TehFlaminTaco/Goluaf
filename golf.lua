@@ -80,8 +80,10 @@ for i=2, #t do
 		flags[t[i]:sub(2):lower()]=(t[i]:sub(2)==t[i]:sub(2):lower())
 	elseif t[i]:sub(1,1)=='-' then
 		flags[t[i]:sub(2):lower()]=(t[i]:sub(2)~=t[i]:sub(2):lower())
-	elseif t[i]:sub(1,1)=='_' then
-		arguments[#arguments+1] = t:sub(2)
+	elseif t[i]:sub(1,2)=='s_' then
+		arguments[#arguments+1] = t[i]:sub(3)
+	elseif t[i]:sub(1,2)=='n_' then
+		arguments[#arguments+1] = tonumber(t[i]:sub(3))
 	end
 end
 
@@ -101,17 +103,73 @@ if not file then
 	error("Cannot load empty file...")
 end
 
+if not flags.e then
+	local f = io.open(file);
+	file = f:read("*a");
+	f:close();
+end
+
+
+if flags.repl then
+	local s = io.read()
+	while s~="exit()" do
+		_ = arguments
+		local b,e
+		b,e = load(s)
+		if not b then
+			local B, E = load("_={"..s.."}")
+			if B then
+				b, e = B, E
+			end
+		end
+		if b then
+			local B,E = pcall(b,table.unpack(arguments))
+			if not B then
+				error(E)
+			else
+				if type(_[1])=='function' then
+					_ = {_[1]()}
+				end
+				for k,v in ipairs(_) do
+					if k~=#_ then
+						print(v)
+					else
+						io.write(tostring(v))
+					end
+				end
+			end
+		else
+			print(e)
+		end
+
+		s = io.read()
+	end
+end
+_ = arguments
 
 local b,e
-if flags.e then
-	b,e = load(file)
-else
-	b,e = loadfile(file)
+b,e = load(file)
+if not b then
+	local B, E = load("_={"..file.."}")
+	if B then
+		b, e = B, E
+	end
 end
 if b then
 	local B,E = pcall(b,table.unpack(arguments))
 	if not B then
 		error(E)
+	else
+		if type(_[1])=='function' then
+			_ = {_[1]()}
+		end
+		for k,v in ipairs(_) do
+			if k~=#_ then
+				print(v)
+			else
+				io.write(tostring(v))
+			end
+		end
 	end
 else
 	error(e)
