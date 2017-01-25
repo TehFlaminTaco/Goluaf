@@ -104,8 +104,46 @@ function func.__pow(a,b)
 	end
 end
 
+function func.__mod(a,b)
+	if type(a)=='function' then
+		if type(b)=='function' then
+			return function(...)
+				return a(b(...))
+			end
+		elseif type(b) == 'table' then
+			return function(...)
+				local vals = {}
+				for k,v in pairs(b) do
+					vals[k] = v(...)
+				end
+				return a(table.unpack(vals))
+			end
+		else
+			return function()
+				return a(b)
+			end
+		end
+	end
+end
+
 function func.__concat(a,b)
-	return func.__add(a,b)
+	if(type(a)=='function' and type(b)=='function') then
+		return function(...)
+			return a(table.unpack(table.add({b()},{...})))
+		end
+	elseif type(a)=='function' then
+		return function(...)
+			return a(table.unpack(table.add({...},{b})))
+		end
+	else
+		return function(...)
+			return b(table.unpack(table.add({a},{...})))
+		end
+	end
+end
+
+function func.__len(a)
+	return function(...) return #a(...) end
 end
 
 -- Strings

@@ -15,14 +15,13 @@ Goluaf blows this out of the water.
 
 But if you feel this is cheating, you can skip the constant alphabet, and actually generate it.
 
-`w((char*(90)(65))())p()` _(23 Bytes)_
+`(w%char)*(90)(65)+p` _(19 Bytes)_
 
 which breaks down into...
 ```
-w((char*(90)(65))())	-- Write the alphabet
-  (char*(90)(65))   	-- for char(n) in 65<=n<=90
-  				 ()  	-- Call it, which generates the arguments 'A', 'B', ..., which io.write loves to just slam together.
-  				 	p() -- Print, giving us our trailing newline.
+(w%char)*(90)(65)+p	-- Write the alphabet
+(w%char)			-- Write with Char(input)
+		*(90)(65)	-- Iterating across all numbers from 65 > 90.
 ```
 
 ## Running scripts
@@ -74,6 +73,10 @@ The operators, and their descriptions are:
 * `a<func>^b<func>`. Returns a function that calls `a(...,b())`.
 * `a<func>^b<any>`. Returns a function that calls `a(...,b)`.
 * `a<any>^b<func>`. Returns a function that calls `a(b,...)`.
+
+* `a<func>%b<func>`. Returns a function that calls `a(b(...))`
+* `a<func>%b<table>`. Returns a function that calls `a(b[1](...),b[2](...),..,b[n](...))`
+* `a<func>%b<any>`. Returns a function that calls `a(b)`
 
 ### String, Boolean and Number Modifications.
 

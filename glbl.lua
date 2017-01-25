@@ -16,3 +16,11 @@ function glb.__index(t,key)
 		return f
 	end
 end
+
+function glb.__newindex(t,key,val)
+	if key:sub(1,1)=="_" and key:sub(2):match("^%d+$") then
+		_[tonumber(key:sub(2))] = val
+	else
+		rawset(t,key,val)
+	end
+end

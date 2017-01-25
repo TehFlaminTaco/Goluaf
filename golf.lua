@@ -33,7 +33,7 @@ local err = error
 function error(str,...)
 	debug_message(str,DEBUG_ERROR)
 	debug_message(debug.traceback(),DEBUG_ERROR)
-	if(__DEBUG & DEBUG_ERROR)then
+	if(flags.crash)then
 		os.exit()
 	end
 end
@@ -110,67 +110,53 @@ if not flags.e then
 end
 
 
+math.randomseed(os.time())
+function docode(s)
+	_ = arguments
+	local b,e
+	b,e = load(s)
+	if not b then
+		local B, E = load("_={"..s.."}")
+		if B then
+			b, e = B, E
+		end
+	end
+	if b then
+		local B,E = pcall(b,table.unpack(arguments))
+		if not B then
+			error(E)
+		else
+			if type(_[1])=='function' then
+				local out = {pcall(_[1],table.unpack(arguments))}
+				if out[1] then
+					_ = {}
+					for i=2, #out do
+						_[i-1] = out[i]
+					end
+				else
+					error(out[2])
+				end
+			end
+			for k,v in ipairs(_) do
+				if k~=#_ then
+					print(v)
+				else
+					io.write(tostring(v))
+				end
+			end
+		end
+	else
+		error(e)
+	end
+end
+
 if flags.repl then
 	local s = io.read()
 	while s~="exit()" do
-		_ = arguments
-		local b,e
-		b,e = load(s)
-		if not b then
-			local B, E = load("_={"..s.."}")
-			if B then
-				b, e = B, E
-			end
-		end
-		if b then
-			local B,E = pcall(b,table.unpack(arguments))
-			if not B then
-				error(E)
-			else
-				if type(_[1])=='function' then
-					_ = {_[1]()}
-				end
-				for k,v in ipairs(_) do
-					if k~=#_ then
-						print(v)
-					else
-						io.write(tostring(v))
-					end
-				end
-			end
-		else
-			print(e)
-		end
-
+		docode(s)
 		s = io.read()
 	end
 end
 _ = arguments
 
-local b,e
-b,e = load(file)
-if not b then
-	local B, E = load("_={"..file.."}")
-	if B then
-		b, e = B, E
-	end
-end
-if b then
-	local B,E = pcall(b,table.unpack(arguments))
-	if not B then
-		error(E)
-	else
-		if type(_[1])=='function' then
-			_ = {_[1]()}
-		end
-		for k,v in ipairs(_) do
-			if k~=#_ then
-				print(v)
-			else
-				io.write(tostring(v))
-			end
-		end
-	end
-else
-	error(e)
-end
+docode(file)
